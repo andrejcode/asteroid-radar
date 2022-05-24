@@ -3,13 +3,11 @@ package com.andrejmilanovic.asteroidradar.api
 import com.andrejmilanovic.asteroidradar.Constants.BASE_URL
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
-import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.converter.scalars.ScalarsConverterFactory
 import retrofit2.http.GET
 import retrofit2.http.Query
-import java.util.concurrent.TimeUnit
 
 /**
  * Build the Moshi object that Retrofit will be using, making sure to add the Kotlin adapter for
