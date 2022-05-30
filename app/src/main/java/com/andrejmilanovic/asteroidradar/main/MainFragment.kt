@@ -6,6 +6,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.andrejmilanovic.asteroidradar.databinding.FragmentMainBinding
+import com.google.android.material.snackbar.Snackbar
 
 class MainFragment : Fragment() {
     /**
@@ -44,8 +45,19 @@ class MainFragment : Fragment() {
         viewModel.status.observe(viewLifecycleOwner) {
             when (it!!) {
                 AsteroidApiStatus.LOADING -> binding.statusLoadingWheel.visibility = View.VISIBLE
-                AsteroidApiStatus.ERROR -> binding.statusLoadingWheel.visibility = View.VISIBLE
+                AsteroidApiStatus.ERROR -> binding.statusLoadingWheel.visibility = View.GONE
                 AsteroidApiStatus.DONE -> binding.statusLoadingWheel.visibility = View.GONE
+            }
+        }
+
+        /**
+         * Show Snackbar whenever [viewModel.snackbar] is updated a non-null value
+         */
+        viewModel.snackbar.observe(viewLifecycleOwner) { text ->
+            text?.let {
+                // Show error message
+                Snackbar.make(requireView(), "Error: $text", Snackbar.LENGTH_SHORT).show()
+                viewModel.onSnackbarShown()
             }
         }
         return binding.root

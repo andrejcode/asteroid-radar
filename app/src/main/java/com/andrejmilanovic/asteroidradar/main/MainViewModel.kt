@@ -38,23 +38,47 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     val asteroids = asteroidsRepository.asteroids
 
     /**
+     * Request a snackBar to display a string.
+     *
+     * This variable is private because we don't want to expose MutableLiveData
+     *
+     * MutableLiveData allows anyone to set a value, and MainViewModel is the only
+     * class that should be setting values.
+     */
+    private val _snackbar = MutableLiveData<String?>()
+    /**
+     * Request a snackbar to display a string.
+     */
+    val snackbar: LiveData<String?>
+        get() = _snackbar
+
+    /**
      * Init is called immediately when ViewModel is created
      * Get asteroids and picture of the day
      */
     init {
         viewModelScope.launch {
-            _status.value = AsteroidApiStatus.LOADING
             try {
+                _status.value = AsteroidApiStatus.LOADING
                 asteroidsRepository.getAsteroids()
                 _pictureOfDay.postValue(
                     AsteroidApi.retrofitService.getPictureOfDay(BuildConfig.NASA_API_KEY)
                         .asDomainModel()
                 )
-                _status.value = AsteroidApiStatus.DONE
             } catch (e: Exception) {
                 _status.value = AsteroidApiStatus.ERROR
+                _snackbar.value = e.message
+            } finally {
+                _status.value = AsteroidApiStatus.DONE
             }
         }
+    }
+
+    /**
+     * Called immediately after the UI shows the snackbar.
+     */
+    fun onSnackbarShown() {
+        _snackbar.value = null
     }
 
     /**
